@@ -40,10 +40,12 @@ export class Flusher {
         let promises: Promise<void>[] = [];
         let pointsByDatabase = Flusher._collectPointsByDatabase(metrics);
         pointsByDatabase.forEach((points, db) => {
-            let promise: Promise<void> = this.handler.influx.writePoints(points, {
-                database: db
-            });
-            promises.push(promise);
+            if (points && points.length > 0) {
+                let promise: Promise<void> = this.handler.influx.writePoints(points, {
+                    database: db
+                });
+                promises.push(promise);
+            }
         })
         let all = Promise.all(promises);
         if (this.callback) {
