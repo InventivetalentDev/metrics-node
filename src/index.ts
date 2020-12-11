@@ -81,6 +81,10 @@ export class IntervalFlusher extends Flusher {
         this._timer = setInterval(() => this.flush, interval);
     }
 
+    flush(metrics: Set<Metric>): Promise<void[]> {
+        return super.flush(metrics);
+    }
+
     cancel() {
         clearInterval(this._timer);
     }
