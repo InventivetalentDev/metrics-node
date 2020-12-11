@@ -72,8 +72,10 @@ export class Flusher {
                     point.fields[k] = v;
                 })
             });
-            points.push(point);
-            pointsByDatabase.set(m.database, points);
+            if (point.fields) {
+                points.push(point);
+                pointsByDatabase.set(m.database, points);
+            }
 
             // Clear cached data
             m._cache.clear();
