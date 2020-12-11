@@ -78,7 +78,7 @@ export class IntervalFlusher extends Flusher {
 
     constructor(handler: Metrics, interval: number) {
         super(handler);
-        this._timer = setInterval(this.flush, interval);
+        this._timer = setInterval(() => this.flush, interval);
     }
 
     cancel() {
