@@ -33,7 +33,7 @@ export class Flusher {
 
     flush(metrics: Set<Metric>) {
         let promises: Promise<void>[] = [];
-        let pointsByDatabase = this._collectPointsByDatabase(metrics);
+        let pointsByDatabase = Flusher._collectPointsByDatabase(metrics);
         pointsByDatabase.forEach((points, db) => {
             let promise: Promise<void> = this.handler.influx.writePoints(points, {
                 database: db
@@ -43,7 +43,7 @@ export class Flusher {
         return Promise.all(promises);
     }
 
-    _collectPointsByDatabase(metrics: Set<Metric>): Map<string, IPoint[]> {
+    static _collectPointsByDatabase(metrics: Set<Metric>): Map<string, IPoint[]> {
         let pointsByDatabase: Map<string, IPoint[]> = new Map<string, IPoint[]>();
         metrics.forEach(m => {
             let points = pointsByDatabase.get(m.database);
