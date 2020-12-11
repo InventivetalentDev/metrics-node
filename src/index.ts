@@ -72,7 +72,6 @@ export class Flusher {
                     point.fields[k] = v;
                 });
             });
-            console.log(point);
             if (point.fields) {
                 points.push(point);
                 pointsByDatabase.set(m.database, points);
