@@ -26,6 +26,7 @@ export class Metrics {
 export class Flusher {
 
     private readonly handler: Metrics;
+    callback: Function;
 
     constructor(handler: Metrics) {
         this.handler = handler;
@@ -40,7 +41,11 @@ export class Flusher {
             });
             promises.push(promise);
         })
-        return Promise.all(promises);
+        let all = Promise.all(promises);
+        if (this.callback) {
+            this.callback(all);
+        }
+        return all;
     }
 
     static _collectPointsByDatabase(metrics: Set<Metric>): Map<string, IPoint[]> {

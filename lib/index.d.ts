@@ -10,6 +10,7 @@ export declare class Metrics {
 }
 export declare class Flusher {
     private readonly handler;
+    callback: Function;
     constructor(handler: Metrics);
     flush(metrics: Set<Metric>): Promise<void[]>;
     static _collectPointsByDatabase(metrics: Set<Metric>): Map<string, IPoint[]>;
