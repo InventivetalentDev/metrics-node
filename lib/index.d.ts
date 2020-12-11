@@ -12,11 +12,12 @@ export declare class Flusher {
     private readonly handler;
     constructor(handler: Metrics);
     flush(metrics: Set<Metric>): Promise<void[]>;
-    _collectPointsByDatabase(metrics: Set<Metric>): Map<string, IPoint[]>;
+    static _collectPointsByDatabase(metrics: Set<Metric>): Map<string, IPoint[]>;
 }
 export declare class IntervalFlusher extends Flusher {
     readonly _timer: NodeJS.Timeout;
     constructor(handler: Metrics, interval: number);
+    flush(metrics: Set<Metric>): Promise<void[]>;
     cancel(): void;
 }
 export declare class Metric {
