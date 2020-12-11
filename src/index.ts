@@ -32,7 +32,11 @@ export class Flusher {
         this.handler = handler;
     }
 
-    flush(metrics: Set<Metric>) {
+    flush() {
+        return this._flush(this.handler.metrics);
+    }
+
+    _flush(metrics: Set<Metric>) {
         let promises: Promise<void>[] = [];
         let pointsByDatabase = Flusher._collectPointsByDatabase(metrics);
         pointsByDatabase.forEach((points, db) => {
@@ -83,11 +87,7 @@ export class IntervalFlusher extends Flusher {
 
     constructor(handler: Metrics, interval: number) {
         super(handler);
-        this._timer = setInterval(() => this.flush, interval);
-    }
-
-    flush(metrics: Set<Metric>): Promise<void[]> {
-        return super.flush(metrics);
+        this._timer = setInterval(() => this.flush(), interval);
     }
 
     cancel() {
