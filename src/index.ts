@@ -47,7 +47,7 @@ export class Flusher {
         })
         let all = Promise.all(promises);
         if (this.callback) {
-            this.callback(all);
+            this.callback(all, pointsByDatabase);
         }
         return all;
     }
