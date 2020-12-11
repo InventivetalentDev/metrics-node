@@ -2,8 +2,8 @@
   "name": "inventive-metrics-node",
   "version": "1.0.0",
   "description": "",
-  "main": "./lib/src/index.js",
-  "typings": "./lib/src/index",
+  "main": "./lib/index.js",
+  "typings": "./lib/index",
   "scripts": {
     "build": "npm run clean && tsc",
     "clean": "rm -rf lib"
