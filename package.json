@@ -1,12 +1,12 @@
 {
   "name": "metrics-node",
   "version": "1.0.0",
-  "description": "",
-  "main": "./lib/index.js",
+  "description": "Utility for tracking metrics via InfluxDB",
+  "main": "dist/index.js",
   "typings": "./lib/index",
   "scripts": {
     "build": "npm run clean && tsc",
-    "clean": "rm -rf lib"
+    "clean": "rm -rf dist"
   },
   "author": "",
   "license": "MIT",
