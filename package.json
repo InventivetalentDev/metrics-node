@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "Utility for tracking metrics via InfluxDB",
   "main": "dist/index.js",
-  "typings": "./lib/index",
+  "typings": "dist/index",
   "scripts": {
     "build": "npm run clean && tsc",
     "clean": "rm -rf dist"
   },
-  "author": "",
+  "author": "Haylee Schäfer",
   "license": "MIT",
   "dependencies": {
     "@types/node": "^14.14.12",
