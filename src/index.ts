@@ -1,4 +1,4 @@
-import { InfluxDB, IPoint, ISingleHostConfig } from "influx";
+import {IClusterConfig, InfluxDB, IPoint, ISingleHostConfig} from "influx";
 
 export class Metrics {
 
@@ -7,8 +7,21 @@ export class Metrics {
 
     private _flusher: Flusher;
 
-    constructor(config: ISingleHostConfig) {
-        this.influx = new InfluxDB(config);
+    constructor(url?: string);
+    constructor(config: ISingleHostConfig);
+    constructor(config: IClusterConfig);
+    constructor(urlOrConfig: string | ISingleHostConfig | IClusterConfig) {
+        if (!urlOrConfig) {
+            urlOrConfig = process.env.INFLUX_URL;
+        }
+        if (!urlOrConfig) {
+            throw new Error("No InfluxDB URL/config provided");
+        }
+        if (typeof urlOrConfig === "string") {
+            this.influx = new InfluxDB(urlOrConfig);
+        } else {
+            this.influx = new InfluxDB(urlOrConfig);
+        }
     }
 
     setFlusher(flusher: Flusher) {
