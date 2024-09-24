@@ -52,10 +52,11 @@ export class Flusher {
     _flush(metrics: Set<Metric>) {
         let promises: Promise<void>[] = [];
         let pointsByDatabase = Flusher._collectPointsByDatabase(metrics);
-        pointsByDatabase.forEach((points, db) => {
+        pointsByDatabase.forEach((points, dbRp) => {
             if (points && points.length > 0) {
                 let promise: Promise<void> = this.handler.influx.writePoints(points, {
-                    database: db
+                    database: dbRp.db,
+                    retentionPolicy: dbRp.rp
                 });
                 promises.push(promise);
             }
@@ -67,10 +68,11 @@ export class Flusher {
         return all;
     }
 
-    static _collectPointsByDatabase(metrics: Set<Metric>): Map<string, IPoint[]> {
-        let pointsByDatabase: Map<string, IPoint[]> = new Map<string, IPoint[]>();
+    static _collectPointsByDatabase(metrics: Set<Metric>): Map<DBandRP, IPoint[]> {
+        let pointsByDatabase: Map<DBandRP, IPoint[]> = new Map<DBandRP, IPoint[]>();
         metrics.forEach(m => {
-            let points = pointsByDatabase.get(m.database);
+            const k: DBandRP = {db: m.database, rp: m.retentionPolicy};
+            let points = pointsByDatabase.get(k);
             if (!points) {
                 points = [];
             }
@@ -87,7 +89,7 @@ export class Flusher {
             });
             if (point.fields) {
                 points.push(point);
-                pointsByDatabase.set(m.database, points);
+                pointsByDatabase.set(k, points);
             }
 
             // Clear cached data
@@ -116,13 +118,16 @@ export class Metric {
 
     private readonly handler: Metrics;
     readonly database: string;
+    readonly retentionPolicy: string | null;
     readonly key: string;
 
     readonly _cache: Map<Map<string, string>, Map<string, number>> = new Map<Map<string, string>, Map<string, number>>(); // <tags> => <field, value>
 
-    constructor(handler: Metrics, database: string, key: string) {
+    constructor(handler: Metrics, database: string, key: string);
+    constructor(handler: Metrics, database: string, key: string, retentionPolicy: string = null) {
         this.handler = handler;
         this.database = database;
+        this.retentionPolicy = retentionPolicy;
         this.key = key;
     }
 
@@ -176,4 +181,9 @@ export class MetricDataBuilder {
         this.metric._inc(amount, this._field, this._tags);
     }
 
+}
+
+interface DBandRP {
+    db: string;
+    rp: string;
 }
