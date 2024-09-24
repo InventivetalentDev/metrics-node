@@ -28,8 +28,10 @@ export class Metrics {
         this._flusher = flusher;
     }
 
-    metric(database: string, key: string): Metric {
-        let m = new Metric(this, database, key);
+    metric(database: string, key: string): Metric;
+    metric(database: string, key: string, retentionPolicy: string): Metric;
+    metric(database: string, key: string, retentionPolicy: string = null): Metric {
+        let m = new Metric(this, database, key, retentionPolicy);
         this.metrics.add(m);
         return m;
     }
@@ -124,6 +126,7 @@ export class Metric {
     readonly _cache: Map<Map<string, string>, Map<string, number>> = new Map<Map<string, string>, Map<string, number>>(); // <tags> => <field, value>
 
     constructor(handler: Metrics, database: string, key: string);
+    constructor(handler: Metrics, database: string, key: string, retentionPolicy: string);
     constructor(handler: Metrics, database: string, key: string, retentionPolicy: string = null) {
         this.handler = handler;
         this.database = database;
