@@ -91,7 +91,8 @@ export class Flusher {
             let point: IPoint = {
                 measurement: m.key
             };
-            m._cache.forEach((counts, tags) => {
+            m._cache.forEach((counts, tagsKey) => {
+                const tags = Metric._parseKey(tagsKey);
                 point.tags = {};
                 tags.forEach((v, k) => point.tags[k] = v);
                 point.fields = {};
@@ -133,7 +134,7 @@ export class Metric {
     readonly retentionPolicy: string | null;
     readonly key: string;
 
-    readonly _cache: Map<Map<string, string>, Map<string, number>> = new Map<Map<string, string>, Map<string, number>>(); // <tags> => <field, value>
+    readonly _cache: Map<string, Map<string, number>> = new Map<string, Map<string, number>>(); // <tags> => <field, value>
 
     constructor(handler: IMetrics, database: string, key: string);
     constructor(handler: IMetrics, database: string, key: string, retentionPolicy: string);
@@ -145,14 +146,14 @@ export class Metric {
     }
 
     _inc(amount: number = 1, field: string = "count", tags: Map<string, string>) {
-        let counts = this._cache.get(tags);
+        let counts = this._cache.get(Metric._mapKey(tags));
         if (!counts) {
             counts = new Map<string, number>();
         }
         let count = counts.get(field) || 0;
         count += amount;
         counts.set(field, count);
-        this._cache.set(tags, counts);
+        this._cache.set(Metric._mapKey(tags), counts);
     }
 
     field(field: string): MetricDataBuilder {
@@ -165,6 +166,22 @@ export class Metric {
 
     inc(amount: number = 1): void {
         return new MetricDataBuilder(this).inc(amount);
+    }
+
+    static _mapKey(tags: Map<string, string>): string {
+        let key = "";
+        tags.forEach((v, k) => key += `${k}=${v},`);
+        return key;
+    }
+
+    static _parseKey(key: string): Map<string, string> {
+        let tags = new Map<string, string>();
+        let parts = key.split(",");
+        parts.forEach(p => {
+            let kv = p.split("=", 2);
+            tags.set(kv[0], kv[1]);
+        });
+        return tags;
     }
 
 }
@@ -195,6 +212,7 @@ export class MetricDataBuilder {
     }
 
 }
+
 
 interface DBandRP {
     db: string;
