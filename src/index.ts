@@ -1,6 +1,6 @@
 import {IClusterConfig, InfluxDB, IPoint, ISingleHostConfig} from "influx";
 
-export class Metrics {
+export class Metrics implements IMetrics {
 
     readonly influx: InfluxDB;
     readonly metrics: Set<Metric> = new Set<Metric>();
@@ -38,12 +38,22 @@ export class Metrics {
 
 }
 
+export interface IMetrics {
+    get metrics(): Set<Metric>;
+
+    setFlusher(flusher: Flusher): void;
+
+    metric(database: string, key: string): Metric;
+
+    metric(database: string, key: string, retentionPolicy: string): Metric;
+}
+
 export class Flusher {
 
-    private readonly handler: Metrics;
+    private readonly handler: IMetrics;
     callback: Function;
 
-    constructor(handler: Metrics) {
+    constructor(handler: IMetrics) {
         this.handler = handler;
     }
 
@@ -56,7 +66,7 @@ export class Flusher {
         let pointsByDatabase = Flusher._collectPointsByDatabase(metrics);
         pointsByDatabase.forEach((points, dbRp) => {
             if (points && points.length > 0) {
-                let promise: Promise<void> = this.handler.influx.writePoints(points, {
+                let promise: Promise<void> = (this.handler as Metrics).influx.writePoints(points, {
                     database: dbRp.db,
                     retentionPolicy: dbRp.rp
                 });
@@ -104,7 +114,7 @@ export class Flusher {
 
 export class IntervalFlusher extends Flusher {
 
-    readonly _timer: NodeJS.Timeout;
+    readonly _timer: NodeJS.Timeout | number;
 
     constructor(handler: Metrics, interval: number) {
         super(handler);
@@ -112,22 +122,22 @@ export class IntervalFlusher extends Flusher {
     }
 
     cancel() {
-        clearInterval(this._timer);
+        clearInterval(this._timer as number);
     }
 }
 
 export class Metric {
 
-    private readonly handler: Metrics;
+    private readonly handler: IMetrics;
     readonly database: string;
     readonly retentionPolicy: string | null;
     readonly key: string;
 
     readonly _cache: Map<Map<string, string>, Map<string, number>> = new Map<Map<string, string>, Map<string, number>>(); // <tags> => <field, value>
 
-    constructor(handler: Metrics, database: string, key: string);
-    constructor(handler: Metrics, database: string, key: string, retentionPolicy: string);
-    constructor(handler: Metrics, database: string, key: string, retentionPolicy: string = null) {
+    constructor(handler: IMetrics, database: string, key: string);
+    constructor(handler: IMetrics, database: string, key: string, retentionPolicy: string);
+    constructor(handler: IMetrics, database: string, key: string, retentionPolicy: string = null) {
         this.handler = handler;
         this.database = database;
         this.retentionPolicy = retentionPolicy;
