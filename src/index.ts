@@ -171,6 +171,7 @@ export class Metric {
     static _mapKey(tags: Map<string, string>): string {
         let key = "";
         tags.forEach((v, k) => key += `${k}=${v},`);
+        key = key.slice(0, -1);
         return key;
     }
 
