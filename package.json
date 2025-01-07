@@ -3,7 +3,10 @@
   "version": "1.2.1",
   "description": "Utility for tracking metrics via InfluxDB",
   "main": "dist/index.js",
-  "typings": "dist/index",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "yarn tsc",
     "clean": "rm -rf dist",
