@@ -1,6 +1,6 @@
 {
   "name": "metrics-node",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Utility for tracking metrics via InfluxDB",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
