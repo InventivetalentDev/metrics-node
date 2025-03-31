@@ -170,7 +170,7 @@ export class Metric {
 
     static _mapKey(tags: Map<string, string>): string {
         let key = "";
-        tags.forEach((v, k) => key += `${k}=${v},`);
+        tags.forEach((v, k) => key += `${this._escapeTag(k)}=${this._escapeTag(v)},`);
         key = key.slice(0, -1);
         return key;
     }
@@ -183,6 +183,14 @@ export class Metric {
             tags.set(kv[0], kv[1]);
         });
         return tags;
+    }
+
+    // escapes influxdb tag keys and values
+    static _escapeTag(key: string): string {
+        return key
+            .replace(/,/g, "\\,")
+            .replace(/ /g, "\\ ")
+            .replace(/=/g, "\\=");
     }
 
 }
