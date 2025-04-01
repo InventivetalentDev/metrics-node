@@ -68,8 +68,8 @@ export class Flusher {
             if (points && points.length > 0) {
                 const [db, rp] = dbRp.split(":");
                 let promise: Promise<void> = (this.handler as Metrics).influx.writePoints(points, {
-                    database: db,
-                    retentionPolicy: rp
+                    database: db === "null" ? undefined : db,
+                    retentionPolicy: rp === "null" ? undefined : rp
                 });
                 promises.push(promise);
             }
