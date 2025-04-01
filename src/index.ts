@@ -50,11 +50,9 @@ export interface IMetrics {
 
 export class Flusher {
 
-    private readonly handler: IMetrics;
     callback: Function;
 
-    constructor(handler: IMetrics) {
-        this.handler = handler;
+    constructor(readonly handler: IMetrics) {
     }
 
     async flush() {
