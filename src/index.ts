@@ -82,7 +82,7 @@ export class Flusher {
     static _collectPointsByDatabase(metrics: Set<Metric>): Map<string, IPoint[]> {
         let pointsByDatabase: Map<string, IPoint[]> = new Map<string, IPoint[]>();
         metrics.forEach(m => {
-            const k = `${m.database}:${m.retentionPolicy}`;
+            const k = `${m.database || null}:${m.retentionPolicy || null}`;
             let points = pointsByDatabase.get(k);
             if (!points) {
                 points = [];
