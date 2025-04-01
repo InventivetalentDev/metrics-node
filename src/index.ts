@@ -66,9 +66,10 @@ export class Flusher {
         let pointsByDatabase = Flusher._collectPointsByDatabase(metrics);
         pointsByDatabase.forEach((points, dbRp) => {
             if (points && points.length > 0) {
+                const [db, rp] = dbRp.split(":");
                 let promise: Promise<void> = (this.handler as Metrics).influx.writePoints(points, {
-                    database: dbRp.db,
-                    retentionPolicy: dbRp.rp
+                    database: db,
+                    retentionPolicy: rp
                 });
                 promises.push(promise);
             }
@@ -80,10 +81,10 @@ export class Flusher {
         return all;
     }
 
-    static _collectPointsByDatabase(metrics: Set<Metric>): Map<DBandRP, IPoint[]> {
-        let pointsByDatabase: Map<DBandRP, IPoint[]> = new Map<DBandRP, IPoint[]>();
+    static _collectPointsByDatabase(metrics: Set<Metric>): Map<string, IPoint[]> {
+        let pointsByDatabase: Map<string, IPoint[]> = new Map<string, IPoint[]>();
         metrics.forEach(m => {
-            const k: DBandRP = {db: m.database, rp: m.retentionPolicy};
+            const k = `${m.database}:${m.retentionPolicy}`;
             let points = pointsByDatabase.get(k);
             if (!points) {
                 points = [];
@@ -228,10 +229,4 @@ export class MetricDataBuilder {
         this.metric._inc(amount, this._field, this._tags);
     }
 
-}
-
-
-interface DBandRP {
-    db: string;
-    rp: string;
 }
