@@ -57,11 +57,11 @@ export class Flusher {
         this.handler = handler;
     }
 
-    flush() {
-        return this._flush(this.handler.metrics);
+    async flush() {
+        return await this._flush(this.handler.metrics);
     }
 
-    _flush(metrics: Set<Metric>) {
+    async _flush(metrics: Set<Metric>) {
         let promises: Promise<void>[] = [];
         let pointsByDatabase = Flusher._collectPointsByDatabase(metrics);
         pointsByDatabase.forEach((points, dbRp) => {
@@ -78,7 +78,7 @@ export class Flusher {
         if (this.callback) {
             this.callback(all, pointsByDatabase);
         }
-        return all;
+        return await all;
     }
 
     static _collectPointsByDatabase(metrics: Set<Metric>): Map<string, IPoint[]> {
