@@ -196,7 +196,6 @@ export class Metric {
     static _escapeTag(key: string): string {
         return key
             .replace(/,/g, "\\,")
-            .replace(/ /g, "\\ ")
             .replace(/=/g, "\\=");
     }
 
