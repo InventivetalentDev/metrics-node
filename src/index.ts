@@ -174,6 +174,9 @@ export class Metric {
             if (!k) {
                 return;
             }
+            if (!v) {
+                v = "";
+            }
             key += `${this._escapeTag(k)}=${this._escapeTag(v)},`;
         });
         key = key.slice(0, -1);
