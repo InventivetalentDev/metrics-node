@@ -145,14 +145,16 @@ export class Metric {
     }
 
     _inc(amount: number = 1, field: string = "count", tags: Map<string, string>) {
-        let counts = this._cache.get(Metric._mapKey(tags));
+        const sortedTags = new Map([...tags.entries()].sort());
+        const key = Metric._mapKey(sortedTags);
+        let counts = this._cache.get(key);
         if (!counts) {
             counts = new Map<string, number>();
         }
         let count = counts.get(field) || 0;
         count += amount;
         counts.set(field, count);
-        this._cache.set(Metric._mapKey(tags), counts);
+        this._cache.set(key, counts);
     }
 
     field(field: string): MetricDataBuilder {
