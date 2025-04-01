@@ -170,7 +170,12 @@ export class Metric {
 
     static _mapKey(tags: Map<string, string>): string {
         let key = "";
-        tags.forEach((v, k) => key += `${this._escapeTag(k)}=${this._escapeTag(v)},`);
+        tags.forEach((v, k) => {
+            if (!k) {
+                return;
+            }
+            key += `${this._escapeTag(k)}=${this._escapeTag(v)},`;
+        });
         key = key.slice(0, -1);
         return key;
     }
