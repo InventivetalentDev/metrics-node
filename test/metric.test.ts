@@ -147,7 +147,7 @@ describe('metric', () => {
                 .inc();
             console.log(metric1._cache)
             expect(metric1._cache.size).toBe(3); // same metric, should not increase
-             expect(metric1._cache.has('')).toBeTruthy();
+            expect(metric1._cache.has('')).toBeTruthy();
             expect(metric1._cache.get('').get('count')).toBe(4);
             expect(metric1._cache.has('server=test')).toBeTruthy();
             expect(metric1._cache.get('server=test').get('count')).toBe(2);
@@ -164,7 +164,7 @@ describe('metric', () => {
                 .inc();
             console.log(metric2._cache)
             expect(metric2._cache.size).toBe(3); // new metric, should be separate
-             expect(metric2._cache.has('')).toBeTruthy();
+            expect(metric2._cache.has('')).toBeTruthy();
             expect(metric2._cache.get('').get('count')).toBe(6);
             expect(metric2._cache.has('server=test')).toBeTruthy();
             expect(metric2._cache.get('server=test').get('count')).toBe(3);
@@ -180,7 +180,7 @@ describe('metric', () => {
                 .inc();
             console.log(metric2._cache)
             expect(metric2._cache.size).toBe(3); // same metric, should not increase
-              expect(metric2._cache.has('')).toBeTruthy();
+            expect(metric2._cache.has('')).toBeTruthy();
             expect(metric2._cache.get('').get('count')).toBe(6);
             expect(metric2._cache.has('server=test')).toBeTruthy();
             expect(metric2._cache.get('server=test').get('count')).toBe(3);
@@ -218,13 +218,37 @@ describe('flusher', () => {
             expect(firstValue).toBeDefined();
             console.log('firstValue', firstValue);
             expect(firstValue.length).toBe(3); // one for each tag combination
-            let firstPoint = firstValue[0];
-            expect(firstPoint).toBeDefined();
-            expect(firstPoint.fields).toBeDefined();
-            expect(firstPoint.tags).toBeDefined();
-            expect(firstPoint.measurement).toBe('test');
-            expect(firstPoint.fields.count).toBeDefined();
-            expect(firstPoint.fields.count).toBe(2);
+            {
+                let firstPoint = firstValue[0];
+                expect(firstPoint).toBeDefined();
+                expect(firstPoint.fields).toBeDefined();
+                expect(firstPoint.tags).toBeDefined();
+                expect(firstPoint.measurement).toBe('test');
+                expect(firstPoint.fields.count).toBeDefined();
+                expect(firstPoint.fields.count).toBe(4);
+            }
+            {
+                let secondPoint = firstValue[1];
+                expect(secondPoint).toBeDefined();
+                expect(secondPoint.fields).toBeDefined();
+                expect(secondPoint.tags).toBeDefined();
+                expect(secondPoint.tags.server).toBeDefined();
+                expect(secondPoint.tags.another).not.toBeDefined();
+                expect(secondPoint.measurement).toBe('test');
+                expect(secondPoint.fields.count).toBeDefined();
+                expect(secondPoint.fields.count).toBe(2);
+            }
+            {
+                let thirdPoint = firstValue[2];
+                expect(thirdPoint).toBeDefined();
+                expect(thirdPoint.fields).toBeDefined();
+                expect(thirdPoint.tags).toBeDefined();
+                expect(thirdPoint.tags.server).toBeDefined();
+                expect(thirdPoint.tags.another).toBeDefined();
+                expect(thirdPoint.measurement).toBe('test');
+                expect(thirdPoint.fields.count).toBeDefined();
+                expect(thirdPoint.fields.count).toBe(2);
+            }
         });
 
         test('collected 2 should match', () => {
@@ -237,13 +261,37 @@ describe('flusher', () => {
             expect(secondValue).toBeDefined();
             console.log('secondValue', secondValue);
             expect(secondValue.length).toBe(3); // one for each tag combination
-            let secondPoint = secondValue[0];
-            expect(secondPoint).toBeDefined();
-            expect(secondPoint.fields).toBeDefined();
-            expect(secondPoint.tags).toBeDefined();
-            expect(secondPoint.measurement).toBe('test_rp');
-            expect(secondPoint.fields.count).toBeDefined();
-            expect(secondPoint.fields.count).toBe(4);
+            {
+                let firstPoint = secondValue[0];
+                expect(firstPoint).toBeDefined();
+                expect(firstPoint.fields).toBeDefined();
+                expect(firstPoint.tags).toBeDefined();
+                expect(firstPoint.measurement).toBe('test_rp');
+                expect(firstPoint.fields.count).toBeDefined();
+                expect(firstPoint.fields.count).toBe(6);
+            }
+            {
+                let secondPoint = secondValue[1];
+                expect(secondPoint).toBeDefined();
+                expect(secondPoint.fields).toBeDefined();
+                expect(secondPoint.tags).toBeDefined();
+                expect(secondPoint.tags.server).toBeDefined();
+                expect(secondPoint.tags.another).not.toBeDefined();
+                expect(secondPoint.measurement).toBe('test_rp');
+                expect(secondPoint.fields.count).toBeDefined();
+                expect(secondPoint.fields.count).toBe(3);
+            }
+            {
+                let thirdPoint = secondValue[2];
+                expect(thirdPoint).toBeDefined();
+                expect(thirdPoint.fields).toBeDefined();
+                expect(thirdPoint.tags).toBeDefined();
+                expect(thirdPoint.tags.server).toBeDefined();
+                expect(thirdPoint.tags.another).toBeDefined();
+                expect(thirdPoint.measurement).toBe('test_rp');
+                expect(thirdPoint.fields.count).toBeDefined();
+                expect(thirdPoint.fields.count).toBe(2);
+            }
         });
 
         test('flushed 1 should match', () => {

@@ -43,22 +43,26 @@ export class Flusher {
             if (!points) {
                 points = [];
             }
-            let point: IPoint = {
-                measurement: m.key
-            };
+
             m._cache.forEach((counts, tagsKey) => {
+                let point: IPoint = {
+                    measurement: m.key,
+                    tags: {},
+                    fields: {}
+                };
+
                 const tags = Metric._parseKey(tagsKey);
-                point.tags = {};
                 tags.forEach((v, k) => point.tags[k] = v);
-                point.fields = {};
                 counts.forEach((v, k) => {
                     point.fields[k] = v;
                 });
+
+                if (point.fields) {
+                    points.push(point);
+                    pointsByDatabase.set(k, points);
+                }
             });
-            if (point.fields) {
-                points.push(point);
-                pointsByDatabase.set(k, points);
-            }
+
 
             // Clear cached data
             m._cache.clear();
