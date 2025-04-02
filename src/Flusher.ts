@@ -52,9 +52,15 @@ export class Flusher {
                 };
 
                 const tags = Metric._parseKey(tagsKey);
-                tags.forEach((v, k) => point.tags[k] = v);
+                tags.forEach((v, k) => {
+                    if (v) {
+                        point.tags[k] = v;
+                    }
+                });
                 counts.forEach((v, k) => {
-                    point.fields[k] = v;
+                    if (v) {
+                        point.fields[k] = v;
+                    }
                 });
 
                 if (point.fields) {
