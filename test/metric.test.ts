@@ -310,6 +310,14 @@ describe('flusher', () => {
             expect(flusher.writtenRp[1]).toBe('one_month');
 
         });
+
+        test('cache 1 should be empty', () => {
+            expect(metric1._cache.size).toBe(0);
+        });
+
+        test('cache 2 should be empty', () => {
+            expect(metric2._cache.size).toBe(0);
+        });
     })
 
 
