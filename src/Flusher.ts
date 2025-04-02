@@ -18,10 +18,7 @@ export class Flusher {
         pointsByDatabase.forEach((points, dbRp) => {
             if (points && points.length > 0) {
                 const [db, rp] = dbRp.split(":");
-                let promise: Promise<void> = (this.handler as Metrics).influx.writePoints(points, {
-                    database: db === "null" ? undefined : db,
-                    retentionPolicy: rp === "null" ? undefined : rp
-                });
+                let promise: Promise<void> = this._writePoints(points, db === "null" ? undefined : db, rp === "null" ? undefined : rp);
                 promises.push(promise);
             }
         })
@@ -30,6 +27,13 @@ export class Flusher {
             this.callback(all, pointsByDatabase);
         }
         return await all;
+    }
+
+    async _writePoints(points: IPoint[], db: string | undefined, rp: string | undefined) {
+        return await (this.handler as Metrics).influx.writePoints(points, {
+            database: db,
+            retentionPolicy: rp
+        });
     }
 
     _collectPointsByDatabase(metrics: Set<Metric>): Map<string, IPoint[]> {
