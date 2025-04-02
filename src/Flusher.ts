@@ -14,7 +14,7 @@ export class Flusher {
 
     async _flush(metrics: Set<Metric>) {
         let promises: Promise<void>[] = [];
-        let pointsByDatabase = Flusher._collectPointsByDatabase(metrics);
+        let pointsByDatabase = this._collectPointsByDatabase(metrics);
         pointsByDatabase.forEach((points, dbRp) => {
             if (points && points.length > 0) {
                 const [db, rp] = dbRp.split(":");
@@ -32,7 +32,7 @@ export class Flusher {
         return await all;
     }
 
-    static _collectPointsByDatabase(metrics: Set<Metric>): Map<string, IPoint[]> {
+    _collectPointsByDatabase(metrics: Set<Metric>): Map<string, IPoint[]> {
         let pointsByDatabase: Map<string, IPoint[]> = new Map<string, IPoint[]>();
         metrics.forEach(m => {
             const k = `${m.database || null}:${m.retentionPolicy || null}`;
