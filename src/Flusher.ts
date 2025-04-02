@@ -3,7 +3,7 @@ import {IMetrics, Metric, Metrics} from "./index";
 
 export class Flusher {
 
-    callback: Function;
+    callback: (pointsByDatabase: Map<string, IPoint[]>) => void;
 
     constructor(readonly handler: IMetrics) {
     }
@@ -22,11 +22,10 @@ export class Flusher {
                 promises.push(promise);
             }
         })
-        let all = Promise.all(promises);
+        await Promise.all(promises);
         if (this.callback) {
-            this.callback(all, pointsByDatabase);
+            this.callback(pointsByDatabase);
         }
-        return await all;
     }
 
     async _writePoints(points: IPoint[], db: string | undefined, rp: string | undefined) {
