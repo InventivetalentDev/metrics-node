@@ -62,7 +62,7 @@ describe('flusher', () => {
             const flusher = new Flusher(metrics);
             expect(flusher).toBeDefined();
             expect(metrics.metrics).toBeDefined();
-            let collected = Flusher._collectPointsByDatabase(metrics.metrics);
+            let collected = flusher._collectPointsByDatabase(metrics.metrics);
             expect(collected).toBeDefined();
             console.log(collected);
 
