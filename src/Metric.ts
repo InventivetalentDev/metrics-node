@@ -1,5 +1,6 @@
 import {IMetrics} from "./IMetrics";
 import {MetricDataBuilder} from "./MetricDataBuilder";
+import {type} from "node:os";
 
 export class Metric {
 
@@ -47,10 +48,10 @@ export class Metric {
     static _mapKey(tags: Map<string, string>): string {
         let key = "";
         tags.forEach((v, k) => {
-            if (!k) {
+            if (typeof k !== "string") {
                 return;
             }
-            if (!v) {
+            if (typeof v !== "string") {
                 v = "";
             }
             key += `${this._escapeTag(k)}=${this._escapeTag(v)},`;
@@ -71,6 +72,9 @@ export class Metric {
 
     // escapes influxdb tag keys and values
     static _escapeTag(key: string): string {
+        if (!key) {
+            return "";
+        }
         return key
             .replace(/,/g, "\\,")
             .replace(/=/g, "\\=");
